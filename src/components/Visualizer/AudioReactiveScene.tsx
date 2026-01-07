@@ -47,6 +47,72 @@ const getFibonacciSpherePoints = (samples: number, radius: number) => {
     return points;
 }
 
+// Cube Points - distributed on surface
+const getCubePoints = (samples: number, size: number) => {
+    const points = new Float32Array(samples * 3);
+    const halfSize = size; // Usually radius is half size, but let's keep scale similar
+    
+    for (let i = 0; i < samples; i++) {
+        // Pick a face (0=x+, 1=x-, 2=y+, 3=y-, 4=z+, 5=z-)
+        const face = Math.floor(Math.random() * 6);
+        const u = (Math.random() * 2 - 1) * halfSize;
+        const v = (Math.random() * 2 - 1) * halfSize;
+        
+        let x, y, z;
+        switch(face) {
+             case 0: x = halfSize; y = u; z = v; break;
+             case 1: x = -halfSize; y = u; z = v; break;
+             case 2: x = u; y = halfSize; z = v; break;
+             case 3: x = u; y = -halfSize; z = v; break;
+             case 4: x = u; y = v; z = halfSize; break;
+             case 5: x = u; y = v; z = -halfSize; break;
+             default: x=0; y=0; z=0;
+        }
+        points[i * 3] = x;
+        points[i * 3 + 1] = y;
+        points[i * 3 + 2] = z;
+    }
+    return points;
+}
+
+// Torus Points
+const getTorusPoints = (samples: number, radius: number) => {
+    const points = new Float32Array(samples * 3);
+    const tubeRadius = radius * 0.4; // Tube thickness relative to radius
+    const ringRadius = radius; 
+    
+    for (let i = 0; i < samples; i++) {
+        const u = Math.random() * Math.PI * 2;
+        const v = Math.random() * Math.PI * 2;
+        
+        const x = (ringRadius + tubeRadius * Math.cos(v)) * Math.cos(u);
+        const y = (ringRadius + tubeRadius * Math.cos(v)) * Math.sin(u);
+        const z = tubeRadius * Math.sin(v);
+        
+        points[i * 3] = x;
+        points[i * 3 + 1] = y;
+        points[i * 3 + 2] = z;
+    }
+    return points;
+}
+
+// Random Cloud
+const getCloudPoints = (samples: number, radius: number) => {
+  const points = new Float32Array(samples * 3);
+  for(let i=0; i<samples; i++){
+      // Random direction
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      // Random distance with bias to center
+      const r = Math.pow(Math.random(), 1/3) * radius * 1.5;
+      
+      points[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+      points[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+      points[i * 3 + 2] = r * Math.cos(phi);
+  }
+  return points;
+}
+
 // Generate random points in a box volume for scatter effect
 const getRandomScatterPoints = (samples: number, size: number) => {
     const points = new Float32Array(samples * 3);
@@ -54,6 +120,64 @@ const getRandomScatterPoints = (samples: number, size: number) => {
         points[i * 3] = (Math.random() - 0.5) * size;     // x
         points[i * 3 + 1] = (Math.random() - 0.5) * size; // y
         points[i * 3 + 2] = (Math.random() - 0.5) * size; // z
+    }
+    return points;
+}
+
+// DNA Helix
+const getDNAPoints = (samples: number, radius: number) => {
+    const points = new Float32Array(samples * 3);
+    const height = radius * 4;
+    const turns = 4;
+    
+    for (let i = 0; i < samples; i++) {
+        // -0.5 to 0.5
+        const t = (i / samples) - 0.5; 
+        const angle = t * Math.PI * 2 * turns;
+        
+        // Split into two strands
+        const isStrandA = i % 2 === 0;
+        const currentAngle = isStrandA ? angle : angle + Math.PI;
+        
+        const x = Math.cos(currentAngle) * radius;
+        const z = Math.sin(currentAngle) * radius;
+        const y = t * height;
+        
+        // Add some "nucleotides" connecting them occasionally
+        if (i % 20 === 0) {
+           // random noise offset to fill the middle
+           points[i * 3] = (Math.random()-0.5) * radius * 0.5;
+           points[i * 3 + 1] = y;
+           points[i * 3 + 2] = (Math.random()-0.5) * radius * 0.5;
+        } else {
+           points[i * 3] = x;
+           points[i * 3 + 1] = y;
+           points[i * 3 + 2] = z;
+        }
+    }
+    return points;
+}
+
+// Spiral / Galaxy
+const getSpiralPoints = (samples: number, radius: number) => {
+    const points = new Float32Array(samples * 3);
+    const arms = 3;
+    const spin = 3;
+    
+    for (let i = 0; i < samples; i++) {
+        // 0 to 1 distance from center
+        const t = Math.pow(Math.random(), 2); // bias towards center
+        const angle = t * Math.PI * 2 * spin + (Math.floor(Math.random() * arms) * (Math.PI * 2 / arms));
+        
+        const currentRadius = t * radius * 2;
+        
+        const x = Math.cos(angle) * currentRadius;
+        const z = Math.sin(angle) * currentRadius;
+        const y = (Math.random() - 0.5) * (radius * 0.2) * (1-t); // flatter at edges
+        
+        points[i * 3] = x;
+        points[i * 3 + 1] = y;
+        points[i * 3 + 2] = z;
     }
     return points;
 }
@@ -88,6 +212,7 @@ export default function AudioReactiveScene() {
   // Settings
   // We sub to radius specifically to trigger geometry rebuild on change
   const sphereRadius = useSettingsStore(state => state.sphereRadius);
+  const visualShape = useSettingsStore(state => state.visualShape);
   
   // Texture
   const glowTexture = useMemo(() => getGlowTexture(), []);
@@ -104,7 +229,17 @@ export default function AudioReactiveScene() {
   const flyerCount = 800; // Increased for ambient dust
   
   // Geometries
-  const targetPositions = useMemo(() => getFibonacciSpherePoints(count, radius), [radius]);
+  const targetPositions = useMemo(() => {
+    switch(visualShape) {
+        case 'cube': return getCubePoints(count, radius);
+        case 'torus': return getTorusPoints(count, radius);
+        case 'particles': return getCloudPoints(count, radius);
+        case 'dna': return getDNAPoints(count, radius);
+        case 'spiral': return getSpiralPoints(count, radius);
+        case 'sphere': 
+        default: return getFibonacciSpherePoints(count, radius);
+    }
+  }, [radius, visualShape]);
 
   const scatterPositions = useMemo(() => getRandomScatterPoints(count, scatterSize), [])
   const flyerBasePositions = useMemo(() => getFlyerPositions(flyerCount), [])

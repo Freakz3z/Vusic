@@ -38,8 +38,18 @@ export const translations = {
     // Customization
     baseColor: "Color Theme",
     bloom: "Bloom Strength",
+    aberration: "Chromatic Aberration",
     pSize: "Particle Size",
-    sSize: "Sphere Size",
+    sSize: "Geometry Scale",
+    shape: "Geometry Shape",
+    shapes: {
+        sphere: "Sphere",
+        cube: "Cube",
+        torus: "Torus",
+        particles: "Cloud",
+        dna: "DNA Helix",
+        spiral: "Galaxy"
+    },
     sensitivity: "Audio Reactivity",
 
     immersion: "IMMERSION",
@@ -89,8 +99,18 @@ export const translations = {
     // Customization
     baseColor: "主题色调",
     bloom: "发光强度",
+    aberration: "动态色散 (Glitch)",
     pSize: "粒子大小",
-    sSize: "球体大小",
+    sSize: "图形大小",
+    shape: "粒子形状",
+    shapes: {
+        sphere: "球体",
+        cube: "立方体",
+        torus: "环面",
+        particles: "星云",
+        dna: "DNA螺旋",
+        spiral: "银河"
+    },
     sensitivity: "响应灵敏度",
 
     immersion: "沉浸体验",

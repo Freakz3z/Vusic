@@ -13,7 +13,9 @@ interface SettingsState {
   bloomStrength: number; // 0.0 to 3.0
   particleSize: number; // 0.5 to 2.0
   sphereRadius: number; // 2.0 to 10.0
+  visualShape: 'sphere' | 'cube' | 'torus' | 'particles' | 'dna' | 'spiral'; // New Shapes
   audioSensitivity: number; // 0.5 to 2.0
+  enableAberration: boolean; // Dynamic Chromatic Aberration
 
   // Behavior
   enableImmersiveMode: boolean; // Auto-hide UI
@@ -33,7 +35,7 @@ interface SettingsState {
 
 export const useSettingsStore = create<SettingsState>((set) => ({
   enableMorphing: true,
-  enableShake: true,
+  enableShake: false,
   shakeIntensity: 0.2,
   useHighQualityTexture: true,
   rotationSpeed: 0.2,
@@ -41,10 +43,12 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   colorTheme: 0.6, // Default to Cyan (0.6)
   bloomStrength: 1.5,
   particleSize: 1.0,
-  sphereRadius: 5.0,
-  audioSensitivity: 1.0,
+  sphereRadius: 3.5,
+  visualShape: 'sphere', // Default
+  audioSensitivity: 0.7,
+  enableAberration: true, // Default ON for visual impact
 
-  enableImmersiveMode: true,
+  enableImmersiveMode: false,
   immersiveDelay: 3,
   
   isUIVisible: true,

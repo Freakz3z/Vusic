@@ -9,7 +9,8 @@ export default function SettingsPanel() {
   const { 
     enableMorphing, enableShake, shakeIntensity, useHighQualityTexture,
     rotationSpeed,
-    colorTheme, bloomStrength, particleSize, sphereRadius, audioSensitivity,
+    colorTheme, bloomStrength, particleSize, sphereRadius, visualShape, audioSensitivity,
+    enableAberration,
     enableImmersiveMode,
     language, setSetting, setLanguage 
   } = useSettingsStore()
@@ -172,6 +173,41 @@ export default function SettingsPanel() {
                                         onChange={(e) => setSetting('particleSize', parseFloat(e.target.value))}
                                         className="w-full accent-cyan-400 bg-white/10 h-1 rounded-lg appearance-none cursor-pointer"
                                     />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <div className="flex justify-between text-xs text-white/60">
+                                        <span>{t.shape}</span>
+                                        <span className="uppercase text-cyan-400 font-bold">{t.shapes[visualShape || 'sphere']}</span>
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-1 bg-white/5 p-1 rounded-lg">
+                                        {(['sphere', 'cube', 'torus', 'dna', 'spiral', 'particles'] as const).map((shape) => (
+                                            <button
+                                                key={shape}
+                                                onClick={() => setSetting('visualShape', shape)}
+                                                className={`py-1.5 rounded-md text-[10px] uppercase tracking-wider transition-all ${
+                                                    visualShape === shape 
+                                                    ? 'bg-cyan-500 text-black font-bold shadow-lg shadow-cyan-500/20' 
+                                                    : 'text-white/40 hover:text-white hover:bg-white/10'
+                                                }`}
+                                            >
+                                                {/* <Box size={14} className="mx-auto mb-1 opacity-80" /> */}
+                                                {t.shapes[shape]}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <div className="flex justify-between text-xs text-white/60">
+                                        <span>{t.aberration}</span>
+                                        <button 
+                                            onClick={() => setSetting('enableAberration', !enableAberration)}
+                                            className={`w-8 h-4 rounded-full relative transition-colors duration-300 ${enableAberration ? 'bg-cyan-500' : 'bg-white/20'}`}
+                                        >
+                                            <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all duration-300 shadow-sm ${enableAberration ? 'left-4.5 translate-x-1' : 'left-0.5'}`} />
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div className="space-y-2">
