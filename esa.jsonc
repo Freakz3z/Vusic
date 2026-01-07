@@ -1,0 +1,15 @@
+{
+  "name": "Vusic",
+  "version": "v1.0.0",
+  "installCommand": "npm install",
+  "buildCommand": "npm run build",
+  "assets": {
+    "directory": "./dist",
+    "notFoundStrategy": "singlePageApplication"
+  },
+  "env": {
+    "production": {
+      "NODE_ENV": "production"
+    }
+  }
+}
