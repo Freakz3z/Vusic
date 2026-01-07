@@ -10,7 +10,6 @@ export default function SettingsPanel() {
     enableMorphing, enableShake, shakeIntensity, useHighQualityTexture,
     rotationSpeed,
     colorTheme, bloomStrength, particleSize, sphereRadius, visualShape, audioSensitivity,
-    enableAberration,
     enableImmersiveMode,
     language, setSetting, setLanguage 
   } = useSettingsStore()
@@ -195,18 +194,6 @@ export default function SettingsPanel() {
                                                 {t.shapes[shape]}
                                             </button>
                                         ))}
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <div className="flex justify-between text-xs text-white/60">
-                                        <span>{t.aberration}</span>
-                                        <button 
-                                            onClick={() => setSetting('enableAberration', !enableAberration)}
-                                            className={`w-8 h-4 rounded-full relative transition-colors duration-300 ${enableAberration ? 'bg-cyan-500' : 'bg-white/20'}`}
-                                        >
-                                            <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all duration-300 shadow-sm ${enableAberration ? 'left-4.5 translate-x-1' : 'left-0.5'}`} />
-                                        </button>
                                     </div>
                                 </div>
 

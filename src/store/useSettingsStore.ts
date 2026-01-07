@@ -15,7 +15,6 @@ interface SettingsState {
   sphereRadius: number; // 2.0 to 10.0
   visualShape: 'sphere' | 'cube' | 'torus' | 'particles' | 'dna' | 'spiral'; // New Shapes
   audioSensitivity: number; // 0.5 to 2.0
-  enableAberration: boolean; // Dynamic Chromatic Aberration
 
   // Behavior
   enableImmersiveMode: boolean; // Auto-hide UI
@@ -46,7 +45,6 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   sphereRadius: 3.5,
   visualShape: 'sphere', // Default
   audioSensitivity: 0.7,
-  enableAberration: true, // Default ON for visual impact
 
   enableImmersiveMode: false,
   immersiveDelay: 3,

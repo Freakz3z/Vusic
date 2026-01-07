@@ -38,7 +38,6 @@ export const translations = {
     // Customization
     baseColor: "Color Theme",
     bloom: "Bloom Strength",
-    aberration: "Chromatic Aberration",
     pSize: "Particle Size",
     sSize: "Geometry Scale",
     shape: "Geometry Shape",
@@ -99,7 +98,6 @@ export const translations = {
     // Customization
     baseColor: "主题色调",
     bloom: "发光强度",
-    aberration: "动态色散 (Glitch)",
     pSize: "粒子大小",
     sSize: "图形大小",
     shape: "粒子形状",
