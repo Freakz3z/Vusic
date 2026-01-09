@@ -34,7 +34,11 @@ export const translations = {
     speed: "Rotation Speed",
     shake: "Bass Shake",
     intensity: "Intensity",
-    
+    bassBoost: "Bass Boost",
+    bassThreshold: "Bass Threshold",
+    morphingIntensity: "Morphing Intensity",
+    pulseIntensity: "Pulse Intensity",
+
     // Customization
     baseColor: "Color Theme",
     bloom: "Bloom Strength",
@@ -44,12 +48,21 @@ export const translations = {
     shapes: {
         sphere: "Sphere",
         cube: "Cube",
-        torus: "Torus",
-        particles: "Cloud",
+        pyramid: "Pyramid",
+        flower: "Flower",
         dna: "DNA Helix",
-        spiral: "Galaxy"
+        spiral: "Galaxy",
+        shell: "Sonic Rings",
+        mobius: "Möbius Strip",
+        tree: "Fractal Tree"
     },
+    autoShapeSwitch: "Auto Shape Switch",
+    autoShapeInterval: "Switch Interval",
+    shortcuts: "Keyboard Shortcuts",
+    shortcutsDesc: "Space/A: Toggle auto switch | S: Next shape | 1-9: Select shape",
     sensitivity: "Audio Reactivity",
+    resetTime: "Particle Reset Speed",
+    shapeTransition: "Shape Morphing Speed",
 
     immersion: "IMMERSION",
     autoHide: "Immersive Mode",
@@ -94,7 +107,11 @@ export const translations = {
     speed: "旋转速度",
     shake: "低音震动",
     intensity: "震动强度",
-    
+    bassBoost: "低音增强",
+    bassThreshold: "低音阈值",
+    morphingIntensity: "变形强度",
+    pulseIntensity: "脉冲强度",
+
     // Customization
     baseColor: "主题色调",
     bloom: "发光强度",
@@ -104,12 +121,21 @@ export const translations = {
     shapes: {
         sphere: "球体",
         cube: "立方体",
-        torus: "环面",
-        particles: "星云",
+        pyramid: "棱锥",
+        flower: "花朵",
         dna: "DNA螺旋",
-        spiral: "银河"
+        spiral: "银河",
+        shell: "音律光环",
+        mobius: "莫比乌斯带",
+        tree: "分形树"
     },
+    autoShapeSwitch: "自动切换图形",
+    autoShapeInterval: "切换间隔",
+    shortcuts: "键盘快捷键",
+    shortcutsDesc: "空格/A: 切换自动模式 | S: 下一个图形 | 1-9: 选择图形",
     sensitivity: "响应灵敏度",
+    resetTime: "粒子回位速度",
+    shapeTransition: "图形变形速度",
 
     immersion: "沉浸体验",
     autoHide: "沉浸模式",

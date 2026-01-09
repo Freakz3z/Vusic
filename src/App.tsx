@@ -5,9 +5,43 @@ import MusicPlayer from './components/UI/MusicPlayer'
 import SettingsPanel from './components/UI/SettingsPanel'
 import ImmersiveHandler from './components/UI/ImmersiveHandler'
 import { useSettingsStore } from './store/useSettingsStore'
+import { useEffect } from 'react'
 
 export default function App() {
-  const { enableImmersiveMode } = useSettingsStore()
+  const { enableImmersiveMode, visualShape, setSetting, autoShapeSwitch, setAutoShapeSwitch } = useSettingsStore()
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      // Space: Toggle auto shape switch
+      if (e.code === 'Space') {
+        e.preventDefault()
+        setSetting('autoShapeSwitch', !autoShapeSwitch)
+      }
+
+      // Number keys 1-9: Switch to specific shape
+      const shapes: Array<'sphere' | 'cube' | 'pyramid' | 'flower' | 'dna' | 'spiral' | 'shell' | 'mobius' | 'tree'> = ['sphere', 'cube', 'pyramid', 'flower', 'dna', 'spiral', 'shell', 'mobius', 'tree']
+      const keyNum = parseInt(e.key)
+      if (keyNum >= 1 && keyNum <= 9) {
+        setSetting('visualShape', shapes[keyNum - 1])
+      }
+
+      // S: Manual switch to next shape
+      if (e.code === 'KeyS') {
+        const currentIndex = shapes.indexOf(visualShape)
+        const nextIndex = (currentIndex + 1) % shapes.length
+        setSetting('visualShape', shapes[nextIndex])
+      }
+
+      // A: Toggle auto switch
+      if (e.code === 'KeyA') {
+        setSetting('autoShapeSwitch', !autoShapeSwitch)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyPress)
+    return () => window.removeEventListener('keydown', handleKeyPress)
+  }, [visualShape, autoShapeSwitch, setSetting])
 
   return (
     <div className="relative w-full h-full bg-black overflow-hidden">

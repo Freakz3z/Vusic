@@ -1,20 +1,37 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { Settings, X, EyeOff, Box, Globe } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useSettingsStore } from '../../store/useSettingsStore'
 import { translations } from '../../utils/translations'
 
 export default function SettingsPanel() {
   const [isOpen, setIsOpen] = useState(false)
+  const panelRef = useRef<HTMLDivElement>(null)
   const { 
     enableMorphing, enableShake, shakeIntensity, useHighQualityTexture,
-    rotationSpeed,
-    colorTheme, bloomStrength, particleSize, sphereRadius, visualShape, audioSensitivity,
+    rotationSpeed, bassBoost, bassThreshold, morphingIntensity, pulseIntensity,
+    colorTheme, bloomStrength, particleSize, sphereRadius, visualShape, audioSensitivity, particleResetTime, shapeTransitionTime,
+    autoShapeSwitch, autoShapeInterval,
     enableImmersiveMode,
     language, setSetting, setLanguage 
   } = useSettingsStore()
 
   const t = translations[language];
+
+  // Handle click outside to close
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (panelRef.current && !panelRef.current.contains(event.target as Node) &&
+          !event.target.closest('button')) {
+        setIsOpen(false)
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isOpen])
 
   // If panel is open, always show.
   // If panel is closed, button visibility depends on immersive mode (hover logic handled by class)
@@ -39,6 +56,7 @@ export default function SettingsPanel() {
       <AnimatePresence>
         {isOpen && (
             <motion.div
+                ref={panelRef}
                 className="absolute top-0 right-0 h-full w-80 bg-black/80 backdrop-blur-xl z-50 p-6 border-l border-white/10 shadow-2xl overflow-y-auto"
                 initial={{ x: '100%' }}
                 animate={{ x: 0 }}
@@ -119,8 +137,8 @@ export default function SettingsPanel() {
                                         <span>{t.intensity}</span>
                                         <span>{(shakeIntensity * 100).toFixed(0)}%</span>
                                     </div>
-                                    <input 
-                                        type="range" 
+                                    <input
+                                        type="range"
                                         min="0" max="1" step="0.05"
                                         value={shakeIntensity}
                                         onChange={(e) => setSetting('shakeIntensity', parseFloat(e.target.value))}
@@ -128,6 +146,65 @@ export default function SettingsPanel() {
                                     />
                                 </div>
                            )}
+
+                           {/* Bass Enhancement Settings */}
+                           <div className="pt-4 border-t border-white/5 space-y-4">
+                                <div className="space-y-2">
+                                    <div className="flex justify-between text-xs text-white/60">
+                                        <span>{t.bassBoost}</span>
+                                        <span>{bassBoost.toFixed(1)}x</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min="1.0" max="3.0" step="0.1"
+                                        value={bassBoost}
+                                        onChange={(e) => setSetting('bassBoost', parseFloat(e.target.value))}
+                                        className="w-full accent-cyan-400 bg-white/10 h-1 rounded-lg appearance-none cursor-pointer"
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <div className="flex justify-between text-xs text-white/60">
+                                        <span>{t.bassThreshold}</span>
+                                        <span>{bassThreshold.toFixed(2)}</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min="0" max="0.5" step="0.05"
+                                        value={bassThreshold}
+                                        onChange={(e) => setSetting('bassThreshold', parseFloat(e.target.value))}
+                                        className="w-full accent-cyan-400 bg-white/10 h-1 rounded-lg appearance-none cursor-pointer"
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <div className="flex justify-between text-xs text-white/60">
+                                        <span>{t.morphingIntensity}</span>
+                                        <span>{morphingIntensity.toFixed(1)}</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min="1.0" max="10.0" step="0.5"
+                                        value={morphingIntensity}
+                                        onChange={(e) => setSetting('morphingIntensity', parseFloat(e.target.value))}
+                                        className="w-full accent-cyan-400 bg-white/10 h-1 rounded-lg appearance-none cursor-pointer"
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <div className="flex justify-between text-xs text-white/60">
+                                        <span>{t.pulseIntensity}</span>
+                                        <span>{pulseIntensity.toFixed(1)}</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min="0.1" max="2.0" step="0.1"
+                                        value={pulseIntensity}
+                                        onChange={(e) => setSetting('pulseIntensity', parseFloat(e.target.value))}
+                                        className="w-full accent-cyan-400 bg-white/10 h-1 rounded-lg appearance-none cursor-pointer"
+                                    />
+                                </div>
+                           </div>
 
                            {/* Customization Sliders */}
                             <div className="space-y-4 pt-4 border-t border-white/5">
@@ -180,21 +257,50 @@ export default function SettingsPanel() {
                                         <span className="uppercase text-cyan-400 font-bold">{t.shapes[visualShape || 'sphere']}</span>
                                     </div>
                                     <div className="grid grid-cols-3 gap-1 bg-white/5 p-1 rounded-lg">
-                                        {(['sphere', 'cube', 'torus', 'dna', 'spiral', 'particles'] as const).map((shape) => (
+                                        {(['sphere', 'cube', 'pyramid', 'flower', 'dna', 'spiral', 'shell', 'mobius', 'tree'] as const).map((shape) => (
                                             <button
                                                 key={shape}
                                                 onClick={() => setSetting('visualShape', shape)}
                                                 className={`py-1.5 rounded-md text-[10px] uppercase tracking-wider transition-all ${
-                                                    visualShape === shape 
-                                                    ? 'bg-cyan-500 text-black font-bold shadow-lg shadow-cyan-500/20' 
+                                                    visualShape === shape
+                                                    ? 'bg-cyan-500 text-black font-bold shadow-lg shadow-cyan-500/20'
                                                     : 'text-white/40 hover:text-white hover:bg-white/10'
                                                 }`}
                                             >
-                                                {/* <Box size={14} className="mx-auto mb-1 opacity-80" /> */}
                                                 {t.shapes[shape]}
                                             </button>
                                         ))}
                                     </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <SettingToggle
+                                        label={t.autoShapeSwitch}
+                                        value={autoShapeSwitch}
+                                        onChange={(v) => setSetting('autoShapeSwitch', v)}
+                                    />
+                                </div>
+
+                                {autoShapeSwitch && (
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between text-xs text-white/60">
+                                            <span>{t.autoShapeInterval}</span>
+                                            <span>{autoShapeInterval.toFixed(0)}s</span>
+                                        </div>
+                                        <input
+                                            type="range"
+                                            min="3" max="30" step="1"
+                                            value={autoShapeInterval}
+                                            onChange={(e) => setSetting('autoShapeInterval', parseFloat(e.target.value))}
+                                            className="w-full accent-cyan-400 bg-white/10 h-1 rounded-lg appearance-none cursor-pointer"
+                                        />
+                                    </div>
+                                )}
+
+                                <div className="p-3 bg-white/5 rounded-lg border border-white/5">
+                                    <p className="text-[10px] text-white/40 leading-relaxed">
+                                        <span className="text-cyan-400 font-bold">{t.shortcuts}:</span> {t.shortcutsDesc}
+                                    </p>
                                 </div>
 
                                 <div className="space-y-2">
@@ -216,11 +322,39 @@ export default function SettingsPanel() {
                                         <span>{t.sensitivity}</span>
                                         <span>{audioSensitivity.toFixed(1)}x</span>
                                     </div>
-                                    <input 
-                                        type="range" 
+                                    <input
+                                        type="range"
                                         min="0.5" max="3.0" step="0.1"
                                         value={audioSensitivity}
                                         onChange={(e) => setSetting('audioSensitivity', parseFloat(e.target.value))}
+                                        className="w-full accent-cyan-400 bg-white/10 h-1 rounded-lg appearance-none cursor-pointer"
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <div className="flex justify-between text-xs text-white/60">
+                                        <span>{t.resetTime}</span>
+                                        <span>{particleResetTime.toFixed(1)}s</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min="0.5" max="5.0" step="0.1"
+                                        value={particleResetTime}
+                                        onChange={(e) => setSetting('particleResetTime', parseFloat(e.target.value))}
+                                        className="w-full accent-cyan-400 bg-white/10 h-1 rounded-lg appearance-none cursor-pointer"
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <div className="flex justify-between text-xs text-white/60">
+                                        <span>{t.shapeTransition}</span>
+                                        <span>{shapeTransitionTime.toFixed(1)}s</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min="0.5" max="5.0" step="0.1"
+                                        value={shapeTransitionTime}
+                                        onChange={(e) => setSetting('shapeTransitionTime', parseFloat(e.target.value))}
                                         className="w-full accent-cyan-400 bg-white/10 h-1 rounded-lg appearance-none cursor-pointer"
                                     />
                                 </div>
