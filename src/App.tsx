@@ -8,7 +8,7 @@ import { useSettingsStore } from './store/useSettingsStore'
 import { useEffect } from 'react'
 
 export default function App() {
-  const { enableImmersiveMode, visualShape, setSetting, autoShapeSwitch, setAutoShapeSwitch } = useSettingsStore()
+  const { enableImmersiveMode, visualShape, setSetting, autoShapeSwitch } = useSettingsStore()
 
   // Keyboard shortcuts
   useEffect(() => {

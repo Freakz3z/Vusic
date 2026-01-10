@@ -75,44 +75,6 @@ const getCubePoints = (samples: number, size: number) => {
     return points;
 }
 
-// Torus Points
-const getTorusPoints = (samples: number, radius: number) => {
-    const points = new Float32Array(samples * 3);
-    const tubeRadius = radius * 0.4; // Tube thickness relative to radius
-    const ringRadius = radius; 
-    
-    for (let i = 0; i < samples; i++) {
-        const u = Math.random() * Math.PI * 2;
-        const v = Math.random() * Math.PI * 2;
-        
-        const x = (ringRadius + tubeRadius * Math.cos(v)) * Math.cos(u);
-        const y = (ringRadius + tubeRadius * Math.cos(v)) * Math.sin(u);
-        const z = tubeRadius * Math.sin(v);
-        
-        points[i * 3] = x;
-        points[i * 3 + 1] = y;
-        points[i * 3 + 2] = z;
-    }
-    return points;
-}
-
-// Random Cloud
-const getCloudPoints = (samples: number, radius: number) => {
-  const points = new Float32Array(samples * 3);
-  for(let i=0; i<samples; i++){
-      // Random direction
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(2 * Math.random() - 1);
-      // Random distance with bias to center
-      const r = Math.pow(Math.random(), 1/3) * radius * 1.5;
-      
-      points[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-      points[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-      points[i * 3 + 2] = r * Math.cos(phi);
-  }
-  return points;
-}
-
 // Generate random points in a box volume for scatter effect
 const getRandomScatterPoints = (samples: number, size: number) => {
     const points = new Float32Array(samples * 3);
@@ -161,7 +123,6 @@ const getDNAPoints = (samples: number, radius: number) => {
 // Pyramid - 4-sided pyramid
 const getPyramidPoints = (samples: number, radius: number) => {
     const points = new Float32Array(samples * 3);
-    const height = radius * 2;
 
     for (let i = 0; i < samples; i++) {
         const face = Math.floor(Math.random() * 4); // 4 triangular faces
@@ -199,6 +160,10 @@ const getPyramidPoints = (samples: number, radius: number) => {
                 v2 = { x: -halfSize, y: -halfSize, z: halfSize };
                 v3 = { x: 0, y: halfSize, z: 0 };
                 break;
+            default:
+                v1 = { x: 0, y: 0, z: 0 };
+                v2 = { x: 0, y: 0, z: 0 };
+                v3 = { x: 0, y: 0, z: 0 };
         }
 
         points[i * 3] = v1.x * a + v2.x * b + v3.x * c;
@@ -304,7 +269,6 @@ const getSpiralShellPoints = (samples: number, radius: number) => {
 
             // Add some thickness to the ring
             const thickness = ringRadius * 0.08;
-            const thicknessAngle = Math.random() * Math.PI * 2;
             const thicknessR = Math.random() * thickness;
 
             const x = Math.cos(angle) * (ringRadius + thicknessR);
@@ -351,7 +315,7 @@ const getFractalTreePoints = (samples: number, radius: number) => {
     const points = new Float32Array(samples * 3);
 
     let index = 0;
-    const addBranch = (originX, originY, originZ, length, angle, depth, maxDepth) => {
+    const addBranch = (originX: number, originY: number, originZ: number, length: number, angle: number, depth: number, maxDepth: number) => {
         if (depth > maxDepth || index >= samples) return;
 
         const endX = originX + Math.sin(angle) * length;

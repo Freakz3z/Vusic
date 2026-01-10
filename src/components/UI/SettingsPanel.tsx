@@ -22,7 +22,7 @@ export default function SettingsPanel() {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (panelRef.current && !panelRef.current.contains(event.target as Node) &&
-          !event.target.closest('button')) {
+          !(event.target as HTMLElement)?.closest('button')) {
         setIsOpen(false)
       }
     }
